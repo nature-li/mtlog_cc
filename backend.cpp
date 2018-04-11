@@ -164,13 +164,6 @@ bool Backend::Rotate() {
     if (file->NeedRotate(max_size_)) {
       file->Rotate();
     }
-
-    // size rotate
-    bool size_rotate = false;
-    long file_size = file->FileSize();
-    if (file_size > max_size_) {
-      size_rotate = true;
-    }
   }
 
   return true;
