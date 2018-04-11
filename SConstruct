@@ -1,4 +1,4 @@
-env = Environment()
+env = Environment(LINKCOM = "$LINK -o $TARGET $SOURCES $_LIBDIRFLAGS $_LIBFLAGS $dynamic_libs $LINKFLAGS", LINKFLAGS = "-static -pthread -Wl,-rpath,./:../lib -Wl,--dynamic-linker=/lib64/ld-linux-x86-64.so.2"	)
 
 build_toolchain = ARGUMENTS.get('toolchain', 'devtoolset3')
 if build_toolchain == 'devtoolset3':
@@ -11,23 +11,11 @@ if build_type.lower() == 'debug':
 else:
   env['CXXFLAGS'] += ['-O3']
 
+env['CXXFLAGS'] += ['--std=c++11', '-Wall', '-pthread']
+env.Append(dynamic_libs='-Wl,-Bdynamic -lm -lc -lrt -ldl')
+
 env.Append(CPPPATH=['/usr/local/include'])
 env.Append(LIBPATH=['/usr/local/lib'])
-env.Append(CXXFLAGS=["--std=c++11"])
-env.Append(LINKFLAGS=[
-        '-undefined',
-        '-pipe',
-        '-W',
-        '-Wall',
-        '-Werror',
-        '-fPIC',
-        '-g',
-])
-env.Append(LIBS=[
-        'z',
-        'pthread',
-])
 
 SRC=Glob("*.c*")
 env.Program(target="mac", source=[SRC], LIBS=[])
-

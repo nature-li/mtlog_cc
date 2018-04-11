@@ -47,11 +47,6 @@ void test_empty_log() {
 
 void loop_test_log(int num) {
   for (int i = 0; i < num; i++) {
-    sleep(1);
-    if (i % 60 == 0) {
-      sleep(180);
-    }
-
     for (int j = 0; j < 10000; j++) {
       test_log();
     }
@@ -95,7 +90,7 @@ int main(int argc, char* argv[]) {
 //  jsonString += jsonString;
 //  jsonString += jsonString;
 
-  int loop_num = 36000;
+  int loop_num = 3600;
   std::cout << "thread num: " << thread_num << std::endl;
   std::vector<std::thread> array;
   for (int i = 0; i < thread_num; i++) {
