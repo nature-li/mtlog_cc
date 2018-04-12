@@ -173,8 +173,7 @@ void FileInfo::Rotate() {
   this->Close();
 
   // rename or delete file
-  long size = lseek(fd_, 0, SEEK_END);
-  if (size > 0) {
+  if (cur_length_ > 0) {
     this->Rename();
   } else {
     this->Delete();
