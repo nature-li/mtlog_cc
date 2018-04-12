@@ -56,7 +56,7 @@ void loop_test_log(int num) {
 int main(int argc, char* argv[]) {
   SET_LOG_LEVEL(trace)
   SET_LOG_ASYNC(false)
-  MT_LOG_INIT(mtad::adlog::develop, "logs", "server_name")
+  MT_LOG_INIT(develop, "logs", "server_name")
 
 //  const std::string vvv = "vav";
 //  LOG_INFO << (char)'a';

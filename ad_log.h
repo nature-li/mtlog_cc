@@ -123,7 +123,7 @@ private:
 #define SET_LOG_ASYNC(OPTION) mtad::adlog::AdLog::Instance()->SetAsync(OPTION);
 
 // Init log
-#define MT_LOG_INIT(ENV, TARGET, ARGS...) mtad::adlog::AdLog::Instance()->Init(ENV, TARGET, ARGS);
+#define MT_LOG_INIT(ENV, TARGET, ARGS...) mtad::adlog::AdLog::Instance()->Init(mtad::adlog::ENV, TARGET, ARGS);
 
 // Init log
 
