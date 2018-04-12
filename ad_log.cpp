@@ -23,6 +23,7 @@ static void StopLogger(int status, void *argv) {
 AdLog::AdLog() :
 		running_flag_(0), async_(true) {
 	// TODO Auto-generated constructor stub
+  filter_ = std::make_shared<Filter>();
 }
 
 AdLog::~AdLog() {
@@ -68,7 +69,6 @@ bool AdLog::Start(std::string file_name, std::string dir, long max_file_size,
 		dir = full_path + "/" + dir;
 	}
 
-	filter_ = std::make_shared<Filter>();
 	writter_ = std::make_shared<Backend>(dir, max_file_size, max_file_count,
 			file_level_name);
 	writter_->Init();
