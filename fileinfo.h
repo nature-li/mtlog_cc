@@ -22,21 +22,11 @@ class FileInfo {
 
   void Put(void* base, size_t len);
 
+  void WriteAndFlush(void* base, size_t len);
+
   int Flush();
 
-  void SetFd(int fd);
-
-  int GetFd();
-
   void SetFileName(const std::string& file_name);
-
-  long FileSize();
-
-  std::string GetFileName();
-
-  struct tm GetLastRenameTime();
-
-  int GetRetValue();
 
   void SetSysLog(SysLog* sys_log);
 
@@ -58,6 +48,7 @@ class FileInfo {
 
  private:
   int fd_;
+  long cur_length_;
   std::string file_name_;
   struct tm last_name_time_;
   int count_;

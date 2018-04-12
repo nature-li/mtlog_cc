@@ -20,45 +20,43 @@ typedef char* CharT;
 std::string jsonString = "this is a trace message";
 
 void test_log() {
-  LOG(trace, "a_pid", "normal") << jsonString;
-  LOG(debug, "a_pid", "normal") << jsonString;
-  LOG(info, "a_pid", "normal") << jsonString;
-  LOG(warn, "a_pid", "normal") << jsonString;
-  LOG(error, "a_pid", "normal") << jsonString;
-  LOG(fatal, "a_pid", "normal") << jsonString;
-  LOG(report, "a_pid", "normal") << jsonString;
-  LOG(trace, "a_pid", "normal") << jsonString;
-  LOG(debug, "a_pid", "normal") << jsonString;
-  LOG(info, "a_pid", "normal") << jsonString;
+	LOG(trace, "a_pid", "normal") << jsonString;
+	LOG(debug, "a_pid", "normal") << jsonString;
+	LOG(info, "a_pid", "normal") << jsonString;
+	LOG(warn, "a_pid", "normal") << jsonString;
+	LOG(error, "a_pid", "normal") << jsonString;
+	LOG(fatal, "a_pid", "normal") << jsonString;
+	LOG(report, "a_pid", "normal") << jsonString;
+	LOG(trace, "a_pid", "normal") << jsonString;
+	LOG(debug, "a_pid", "normal") << jsonString;
+	LOG(info, "a_pid", "normal") << jsonString;
 }
 
 void test_empty_log() {
-  LOG(trace, "a_pid", "normal");
-  LOG(debug, "a_pid", "normal");
-  LOG(info, "a_pid", "normal");
-  LOG(warn, "a_pid", "normal");
-  LOG(error, "a_pid", "normal");
-  LOG(fatal, "a_pid", "normal");
-  LOG(report, "a_pid", "normal");
-  LOG(trace, "a_pid", "normal");
-  LOG(debug, "a_pid", "normal");
-  LOG(info, "a_pid", "normal");
+	LOG(trace, "a_pid", "normal");
+	LOG(debug, "a_pid", "normal");
+	LOG(info, "a_pid", "normal");
+	LOG(warn, "a_pid", "normal");
+	LOG(error, "a_pid", "normal");
+	LOG(fatal, "a_pid", "normal");
+	LOG(report, "a_pid", "normal");
+	LOG(trace, "a_pid", "normal");
+	LOG(debug, "a_pid", "normal");
+	LOG(info, "a_pid", "normal");
 }
 
 void loop_test_log(int num) {
-  for (int i = 0; i < num; i++) {
-    for (int j = 0; j < 10000; j++) {
-      test_log();
-    }
-  }
+	for (int i = 0; i < num; i++) {
+		for (int j = 0; j < 10000; j++) {
+			test_log();
+		}
+	}
 }
 
-
 int main(int argc, char* argv[]) {
-  mtad::adlog::AdLog::Instance()->Init(mtad::adlog::develop, "logs",
-                                       "server_name", 100 * 1024 * 1024,
-                                       100 * 1024);
-  SET_LOG_LEVEL (trace);
+	mtad::adlog::AdLog::Instance()->Init(mtad::adlog::develop, "logs",
+			"server_name", 100 * 1024 * 1024, 100 * 1024, -1, false);
+	SET_LOG_LEVEL(trace);
 
 //  const std::string vvv = "vav";
 //  LOG_INFO << (char)'a';
@@ -81,42 +79,43 @@ int main(int argc, char* argv[]) {
 //  LOG_INFO << vvv;
 //  LOG_INFO << (void*)&vvv;
 
-  int thread_num = 0;
-  if (argc == 2) {
-    thread_num = atoi(argv[1]);
-  }
+	int thread_num = 0;
+	if (argc == 2) {
+		thread_num = atoi(argv[1]);
+	}
 
 //  jsonString += jsonString;
 //  jsonString += jsonString;
 //  jsonString += jsonString;
 
-  int loop_num = 3600;
-  std::cout << "thread num: " << thread_num << std::endl;
-  std::vector<std::thread> array;
-  for (int i = 0; i < thread_num; i++) {
-    array.push_back(std::thread(loop_test_log, loop_num));
-  }
+	int loop_num = 10;
+	std::cout << "thread num: " << thread_num << std::endl;
+	std::vector<std::thread> array;
+	for (int i = 0; i < thread_num; i++) {
+		array.push_back(std::thread(loop_test_log, loop_num));
+	}
 
-  timeval tv1;
-  gettimeofday(&tv1, NULL);
-  for (int i = 0; i < thread_num; i++) {
-    array[i].join();
-  }
+	timeval tv1;
+	gettimeofday(&tv1, NULL);
+	for (int i = 0; i < thread_num; i++) {
+		array[i].join();
+	}
 
-  timeval tv2;
-  gettimeofday(&tv2, NULL);
+	timeval tv2;
+	gettimeofday(&tv2, NULL);
 
-  std::cout << "seconds: " << tv2.tv_sec - tv1.tv_sec << std::endl;
-  std::cout << "milliseconds: " << tv2.tv_usec - tv1.tv_usec << std::endl;
-  float t = (tv2.tv_sec - tv1.tv_sec) * 1000000.0 + (tv2.tv_usec - tv1.tv_usec);
-  std::cout << "speed: " << "10.0 * " << thread_num << " * " << loop_num
-            << " * 1000000.0 / " << t << " = "
-            << 10.0 * thread_num * loop_num * 1000000.0 / t << "(W) per seconds"
-            << std::endl;
+	std::cout << "seconds: " << tv2.tv_sec - tv1.tv_sec << std::endl;
+	std::cout << "milliseconds: " << tv2.tv_usec - tv1.tv_usec << std::endl;
+	float t = (tv2.tv_sec - tv1.tv_sec) * 1000000.0
+			+ (tv2.tv_usec - tv1.tv_usec);
+	std::cout << "speed: " << "10.0 * " << thread_num << " * " << loop_num
+			<< " * 1000000.0 / " << t << " = "
+			<< 10.0 * thread_num * loop_num * 1000000.0 / t << "(W) per seconds"
+			<< std::endl;
 
-  std::cout << "Before Stop....." << std::endl;
-  mtad::adlog::AdLog::Instance()->Stop();
-  std::cout << "End Stop!!!" << std::endl;
-  return 0;
+	std::cout << "Before Stop....." << std::endl;
+	mtad::adlog::AdLog::Instance()->Stop();
+	std::cout << "End Stop!!!" << std::endl;
+	return 0;
 }
 

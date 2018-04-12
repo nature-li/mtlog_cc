@@ -24,62 +24,60 @@ class Backend;
 class Sink;
 
 class AdLog {
- public:
-  AdLog();
-  virtual ~AdLog();
+public:
+	AdLog();
+	virtual ~AdLog();
 
-  static AdLog* Instance();
+	static AdLog* Instance();
 
-  bool Init(LogEnv env, const std::string& target, const std::string& file_name,
-            long file_size = 100 * 1024 * 1024, int queue_size = 100 * 1024,
-            int max_file_count = -1);
+	bool Init(LogEnv env, const std::string& target,
+			const std::string& file_name, long file_size = 100 * 1024 * 1024,
+			int queue_size = 100 * 1024, int max_file_count = -1, bool async=true);
 
-  bool Start(std::string file_name, std::string dir, long max_file_size,
-             int max_queue_size,
-             const std::map<int, std::string>& file_level_name,
-             int max_file_count);
+	bool Start(std::string file_name, std::string dir, long max_file_size,
+			int max_queue_size,
+			const std::map<int, std::string>& file_level_name,
+			int max_file_count);
 
-  void Stop();
+	void Stop();
 
-  void SetMinLevel(LogSev level);
+	void SetMinLevel(LogSev level);
 
-  bool Filt(LogSev level);
+	bool Filt(LogSev level);
 
-  bool DirectPushLog(Record* record);
+	bool DirectPushLog(Record* record);
 
-  void SetAsync(bool async);
+private:
+	void DeleteExpireLog();
 
- private:
-  void DeleteExpireLog();
+private:
+	static AdLog* instance_;
+	static std::mutex mutex_;
+	std::shared_ptr<Filter> filter_;
+	std::shared_ptr<Backend> writter_;
+	std::shared_ptr<Sink> sink_;
+	int running_flag_;
+	bool async_;
 
- private:
-  static AdLog* instance_;
-  static std::mutex mutex_;
-  std::shared_ptr<Filter> filter_;
-  std::shared_ptr<Backend> writter_;
-  std::shared_ptr<Sink> sink_;
-  int running_flag_;
-  bool async_;
-
- public:
-  static LogEnv env_;
+public:
+	static LogEnv env_;
 };
 
-class Wrapper : public Stream {
- public:
-  Wrapper(LogSev level, const char* file, int line, const char* func,
-          const std::string& pv_id, const std::string& keyword);
+class Wrapper: public Stream {
+public:
+	Wrapper(LogSev level, const char* file, int line, const char* func,
+			const std::string& pv_id, const std::string& keyword);
 
-  ~Wrapper();
+	~Wrapper();
 
-  Stream& stream();
+	Stream& stream();
 
- private:
-  void Prefix(LogSev level, const char* file, int line, const char* func,
-              const std::string& pv_id, const std::string& keyword);
+private:
+	void Prefix(LogSev level, const char* file, int line, const char* func,
+			const std::string& pv_id, const std::string& keyword);
 
- private:
-  Record* record_;
+private:
+	Record* record_;
 };
 
 }

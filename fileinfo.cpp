@@ -15,6 +15,7 @@ namespace adlog {
 
 FileInfo::FileInfo()
     : fd_(-1),
+	  cur_length_(0),
       count_(0),
       ret_code_(0),
       sys_log_(NULL) {
@@ -37,7 +38,10 @@ int FileInfo::Flush() {
   int ret = 0;
   if (count_ > 0) {
     ret = writev(fd_, vec_, count_);
-    if (ret == -1) {
+
+    if (ret != -1) {
+    	cur_length_ += ret;
+    } else {
       ret_code_ = ret;
       std::ostringstream oss;
       oss << __FILE__ << ":" << __LINE__ << " writev error: " << strerror(errno)
@@ -50,37 +54,8 @@ int FileInfo::Flush() {
   return ret;
 }
 
-void FileInfo::SetFd(int fd) {
-  fd_ = fd;
-}
-
-int FileInfo::GetFd() {
-  return fd_;
-}
-
 void FileInfo::SetFileName(const std::string& file_name) {
   file_name_ = file_name;
-}
-
-std::string FileInfo::GetFileName() {
-  return file_name_;
-}
-
-long FileInfo::FileSize() {
-  long size = lseek(fd_, 0, SEEK_END);
-  if (size == -1) {
-    ret_code_ = size;
-  }
-
-  return size;
-}
-
-struct tm FileInfo::GetLastRenameTime() {
-  return last_name_time_;
-}
-
-int FileInfo::GetRetValue() {
-  return ret_code_;
 }
 
 void FileInfo::SetSysLog(SysLog* sys_log) {
@@ -90,6 +65,7 @@ void FileInfo::SetSysLog(SysLog* sys_log) {
 void FileInfo::Reset() {
   ret_code_ = 0;
   fd_ = -1;
+  cur_length_ = 0;
   count_ = 0;
   ret_code_ = 0;
 }
@@ -98,6 +74,7 @@ void FileInfo::Reset(int fd, struct tm& last_name_time) {
   Reset();
 
   fd_ = fd;
+  cur_length_ = lseek(fd_, 0, SEEK_END);
   last_name_time_ = last_name_time;
 }
 
@@ -106,16 +83,14 @@ bool FileInfo::NeedRotate(long max_size) {
   Tool::GetCurTime(now);
 
   // size rotate
-  long file_size = this->FileSize();
-  if (file_size > max_size) {
+  if (cur_length_ > max_size) {
     return true;
   }
 
   // zero night rotate
-  struct tm last_name_time = this->GetLastRenameTime();
-  if (now.tm_year != last_name_time.tm_year
-      || now.tm_mon != last_name_time.tm_mon
-      || now.tm_mday != last_name_time.tm_mday) {
+  if (now.tm_year != last_name_time_.tm_year
+      || now.tm_mon != last_name_time_.tm_mon
+      || now.tm_mday != last_name_time_.tm_mday) {
     return true;
   }
 
@@ -202,6 +177,16 @@ void FileInfo::Rotate() {
 
   // reopen file
   this->Open();
+}
+
+void FileInfo::WriteAndFlush(void* base, size_t len) {
+	size_t count = write(fd_, base, len);
+	if (count < len) {
+		std::ostringstream oss;
+		    oss << __FILE__ << ":" << __LINE__ << " write " << file_name_ << " size:"
+		        << count << " < len:" << len << std::endl;
+		    sys_log_->LogError(oss.str().c_str());
+	}
 }
 
 }
