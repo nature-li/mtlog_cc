@@ -15,7 +15,7 @@ namespace adlog {
 
 FileInfo::FileInfo()
     : fd_(-1),
-	  cur_length_(0),
+      cur_length_(0),
       count_(0),
       ret_code_(0),
       sys_log_(NULL) {
@@ -40,7 +40,7 @@ int FileInfo::Flush() {
     ret = writev(fd_, vec_, count_);
 
     if (ret != -1) {
-    	cur_length_ += ret;
+      cur_length_ += ret;
     } else {
       ret_code_ = ret;
       std::ostringstream oss;
@@ -180,13 +180,13 @@ void FileInfo::Rotate() {
 }
 
 void FileInfo::WriteAndFlush(void* base, size_t len) {
-	size_t count = write(fd_, base, len);
-	if (count < len) {
-		std::ostringstream oss;
-		    oss << __FILE__ << ":" << __LINE__ << " write " << file_name_ << " size:"
-		        << count << " < len:" << len << std::endl;
-		    sys_log_->LogError(oss.str().c_str());
-	}
+  size_t count = write(fd_, base, len);
+  if (count < len) {
+    std::ostringstream oss;
+    oss << __FILE__ << ":" << __LINE__ << " write " << file_name_ << " size:"
+        << count << " < len:" << len << std::endl;
+    sys_log_->LogError(oss.str().c_str());
+  }
 }
 
 }

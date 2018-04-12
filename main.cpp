@@ -55,7 +55,7 @@ void loop_test_log(int num) {
 
 int main(int argc, char* argv[]) {
   SET_LOG_LEVEL(trace)
-  SET_LOG_ASYNC(false)
+  SET_LOG_ASYNC(true)
   MT_LOG_INIT(develop, "logs", "server_name")
 
 //  const std::string vvv = "vav";
@@ -113,7 +113,7 @@ int main(int argc, char* argv[]) {
             << std::endl;
 
   std::cout << "Before Stop....." << std::endl;
-  mtad::adlog::AdLog::Instance()->Stop();
+  MT_LOG_STOP()
   std::cout << "End Stop!!!" << std::endl;
   return 0;
 }

@@ -125,6 +125,9 @@ private:
 // Init log
 #define MT_LOG_INIT(ENV, TARGET, ARGS...) mtad::adlog::AdLog::Instance()->Init(mtad::adlog::ENV, TARGET, ARGS);
 
+// Stop log
+#define MT_LOG_STOP() mtad::adlog::AdLog::Instance()->Stop();
+
 // Init log
 
 #endif /* AD_LOG_H_ */
