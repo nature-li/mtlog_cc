@@ -49,7 +49,6 @@ class Backend {
 
  private:
   std::string dir_;
-  long max_size_;
   int file_count_;
   std::thread thread_;
   int flag_;

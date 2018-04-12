@@ -14,7 +14,7 @@ namespace adlog {
 
 class FileInfo {
  public:
-  FileInfo();
+  FileInfo(long max_length);
 
   ~FileInfo();
 
@@ -24,7 +24,7 @@ class FileInfo {
 
   void WriteAndFlush(void* base, size_t len);
 
-  int Flush();
+  int FlushAndRotate();
 
   void SetFileName(const std::string& file_name);
 
@@ -34,7 +34,7 @@ class FileInfo {
 
   void Reset(int fd, struct tm& last_name_time);
 
-  bool NeedRotate(long max_size);
+  bool NeedRotate();
 
   bool Open();
 
@@ -49,6 +49,7 @@ class FileInfo {
  private:
   int fd_;
   long cur_length_;
+  long max_length_;
   std::string file_name_;
   struct tm last_name_time_;
   int count_;

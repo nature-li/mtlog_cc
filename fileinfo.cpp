@@ -13,9 +13,10 @@
 namespace mtad {
 namespace adlog {
 
-FileInfo::FileInfo()
+FileInfo::FileInfo(long max_length)
     : fd_(-1),
       cur_length_(0),
+      max_length_(max_length),
       count_(0),
       ret_code_(0),
       sys_log_(NULL) {
@@ -34,21 +35,25 @@ void FileInfo::Put(void* base, size_t len) {
   count_++;
 }
 
-int FileInfo::Flush() {
+int FileInfo::FlushAndRotate() {
   int ret = 0;
   if (count_ > 0) {
     ret = writev(fd_, vec_, count_);
+    count_ = 0;
 
-    if (ret != -1) {
-      cur_length_ += ret;
-    } else {
+    if (ret == -1) {
       ret_code_ = ret;
       std::ostringstream oss;
       oss << __FILE__ << ":" << __LINE__ << " writev error: " << strerror(errno)
           << std::endl;
       sys_log_->LogError(oss.str().c_str());
+      return ret;
     }
-    count_ = 0;
+
+    cur_length_ += ret;
+    if (cur_length_ >= max_length_) {
+      this->Rotate();
+    }
   }
 
   return ret;
@@ -78,12 +83,12 @@ void FileInfo::Reset(int fd, struct tm& last_name_time) {
   last_name_time_ = last_name_time;
 }
 
-bool FileInfo::NeedRotate(long max_size) {
+bool FileInfo::NeedRotate() {
   struct tm now;
   Tool::GetCurTime(now);
 
   // size rotate
-  if (cur_length_ > max_size) {
+  if (cur_length_ > max_length_) {
     return true;
   }
 
