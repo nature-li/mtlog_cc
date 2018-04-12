@@ -169,11 +169,14 @@ void FileInfo::Delete() {
 }
 
 void FileInfo::Rotate() {
+  // check save or delete
+  bool save = cur_length_ > 0;
+
   // close file
   this->Close();
 
   // rename or delete file
-  if (cur_length_ > 0) {
+  if (save) {
     this->Rename();
   } else {
     this->Delete();
