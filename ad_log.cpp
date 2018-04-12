@@ -44,7 +44,6 @@ bool AdLog::Init(LogEnv env, const std::string& target,
 		const std::string& file_name, long file_size, int queue_size,
 		int max_file_count, bool async) {
 	env_ = env;
-	async_ = async;
 	std::map<int, std::string> file_level_name;
 	file_level_name[trace] = file_name + ".process.log";
 	file_level_name[debug] = file_name + ".process.log";
@@ -109,6 +108,10 @@ void AdLog::SetMinLevel(LogSev level) {
 
 bool AdLog::Filt(LogSev level) {
 	return filter_->Filt(level);
+}
+
+void AdLog::SetAsync(bool async) {
+  this->async_ = async;
 }
 
 Wrapper::Wrapper(LogSev level, const char* file, int line, const char* func,

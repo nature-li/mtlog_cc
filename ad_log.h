@@ -32,7 +32,7 @@ public:
 
 	bool Init(LogEnv env, const std::string& target,
 			const std::string& file_name, long file_size = 100 * 1024 * 1024,
-			int queue_size = 100 * 1024, int max_file_count = -1, bool async=true);
+			int queue_size = 100 * 1024, int max_file_count = -1);
 
 	bool Start(std::string file_name, std::string dir, long max_file_size,
 			int max_queue_size,
@@ -46,6 +46,8 @@ public:
 	bool Filt(LogSev level);
 
 	bool DirectPushLog(Record* record);
+
+	void SetAsync(bool async);
 
 private:
 	void DeleteExpireLog();
@@ -116,5 +118,13 @@ private:
 
 // Set log level
 #define SET_LOG_LEVEL(LVL) mtad::adlog::AdLog::Instance()->SetMinLevel(mtad::adlog::LVL);
+
+// Set log async
+#define SET_LOG_ASYNC(OPTION) mtad::adlog::AdLog::Instance()->SetAsync(OPTION);
+
+// Init log
+#define MT_LOG_INIT(ENV, TARGET, ARGS...) mtad::adlog::AdLog::Instance()->Init(ENV, TARGET, ARGS);
+
+// Init log
 
 #endif /* AD_LOG_H_ */
