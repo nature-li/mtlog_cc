@@ -42,7 +42,7 @@ AdLog* AdLog::Instance() {
 
 bool AdLog::Init(LogEnv env, const std::string& target,
 		const std::string& file_name, long file_size, int queue_size,
-		int max_file_count, bool async) {
+		int max_file_count) {
 	env_ = env;
 	std::map<int, std::string> file_level_name;
 	file_level_name[trace] = file_name + ".process.log";
