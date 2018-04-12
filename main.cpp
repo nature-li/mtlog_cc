@@ -54,9 +54,9 @@ void loop_test_log(int num) {
 }
 
 int main(int argc, char* argv[]) {
+
+  mtad::adlog::AdLog::Instance()->Init(true, mtad::adlog::develop, "logs", "server_name");
   SET_LOG_LEVEL(trace)
-  SET_LOG_ASYNC(true)
-  MT_LOG_INIT(develop, "logs", "server_name")
 
 //  const std::string vvv = "vav";
 //  LOG_INFO << (char)'a';
@@ -113,7 +113,7 @@ int main(int argc, char* argv[]) {
             << std::endl;
 
   std::cout << "Before Stop....." << std::endl;
-  MT_LOG_STOP()
+  mtad::adlog::AdLog::Instance();
   std::cout << "End Stop!!!" << std::endl;
   return 0;
 }
