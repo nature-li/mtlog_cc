@@ -30,21 +30,22 @@ class FileInfo {
 
   void SetSysLog(SysLog* sys_log);
 
-  void Reset();
-
-  void Reset(int fd, struct tm& last_name_time);
-
   bool NeedRotate();
 
   bool Open();
 
   bool Close();
 
+  void Rotate();
+
+ private:
+  void Reset();
+
   bool Rename();
 
   void Delete();
 
-  void Rotate();
+  void Reset(int fd, struct tm& last_name_time);
 
  private:
   int fd_;
